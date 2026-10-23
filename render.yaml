@@ -1,19 +1,20 @@
-# Render Blueprint for BrandGuard AI
-# Import in Render: New + Blueprints -> pick repo -> pastes this automatically.
+# Render Blueprint for BrandGuard AI (PostgreSQL backend)
+# Import in Render: New + Blueprints -> repo -> pastes this automatically.
+# DATABASE_URL must be a Postgres URL (e.g. a free Neon instance).
 services:
   - type: web
     name: brandguard-ai
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npx prisma db push && npm run build
+    buildCommand: npm install && npx prisma db push && node prisma/seed.js && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: "22.11.0"
-      # Committed seeded SQLite DB -> demo accounts exist on every deploy
+      # Paste a Postgres connection string here when Render asks (never committed to git)
       - key: DATABASE_URL
-        value: file:/opt/render/project/src/prisma/dev.db
+        sync: false
       # Paste your Groq key here when Render asks (never committed to git)
       - key: GROQ_API_KEY
         sync: false

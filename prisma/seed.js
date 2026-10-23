@@ -10,20 +10,20 @@ async function main() {
   await prisma.user.upsert({ where: { email: "manager@demo.com" }, update: {}, create: { email: "manager@demo.com", password: pw, name: "Manager", role: "manager" } });
   await prisma.user.upsert({ where: { email: "admin@demo.com" }, update: {}, create: { email: "admin@demo.com", password: pw, name: "Admin", role: "admin" } });
 
-  await prisma.brandGuideline.createMany({ data: [
+  await prisma.brandGuideline.createMany({ skipDuplicates: true, data: [
     { orgId: "default", title: "Tone", category: "tone", content: "Use a professional, concise, helpful tone. Avoid hype and unverified superlatives." },
     { orgId: "default", title: "Messaging", category: "messaging", content: "Do not make unsupported claims like 'fastest' or 'best'. Only use approved facts." },
     { orgId: "default", title: "Accessibility", category: "accessibility", content: "Every image must have descriptive alt text. Body text contrast must meet WCAG AA." },
   ] });
-  await prisma.approvedFact.createMany({ data: [
+  await prisma.approvedFact.createMany({ skipDuplicates: true, data: [
     { orgId: "default", statement: "BrandGuard AI reviews content before publication.", source: "Product docs" },
     { orgId: "default", statement: "Supports text, PDF, DOCX and image formats.", source: "Product docs" },
   ] });
-  await prisma.terminology.createMany({ data: [
+  await prisma.terminology.createMany({ skipDuplicates: true, data: [
     { orgId: "default", term: "AI", preferred: "AI", avoid: "artificial intelligence (use AI)", note: "Use 'AI' consistently." },
     { orgId: "default", term: "brand kit", preferred: "brand kit", avoid: "brand guidelines (deprecated)", note: "Use 'brand kit'." },
   ] });
-  await prisma.asset.createMany({ data: [
+  await prisma.asset.createMany({ skipDuplicates: true, data: [
     { orgId: "default", name: "Logo primary", type: "logo", url: "https://example.com/logo.png", metadata: "alt: BrandGuard AI logo; dims 200x60" },
   ] });
 

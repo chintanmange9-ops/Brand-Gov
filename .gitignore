@@ -43,6 +43,7 @@ next-env.d.ts
 # app-local clutter that should never ship
 /uploads
 /raw.txt
+/prisma/dev.db
 /*.pdf
 /arch_*.png
 /architecture.png

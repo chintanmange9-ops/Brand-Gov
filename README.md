@@ -30,7 +30,7 @@ Every AI finding is advisory; nothing publishes without a human approval chain.
 ## Tech stack
 
 - **Next.js 16** (App Router, TypeScript, Turbopack) + Tailwind CSS
-- **Prisma 5** + SQLite
+- **Prisma 5** + PostgreSQL (Neon/Vercel Postgres on serverless)
 - **Groq** (`openai/gpt-oss-20b`) for the review engine
 - Auth: JWT session (`jose`) with bcrypt-hashed passwords, role-based access
   (creator / reviewer / manager / steward / admin)
@@ -39,7 +39,6 @@ Every AI finding is advisory; nothing publishes without a human approval chain.
 
 ```bash
 npm install
-cp .env.example .env        # set GROQ_API_KEY (free at console.groq.com)
 npx prisma db push
 node prisma/seed.js
 npm run dev                 # http://localhost:3000

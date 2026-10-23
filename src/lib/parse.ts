@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises";
 import path from "path";
+import os from "os";
 
 export async function extractText(filePath: string, mime: string): Promise<string> {
   const buf = await readFile(filePath);
@@ -25,4 +26,5 @@ export function safeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
-export const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+// Serverless platforms (Vercel etc.) have a read-only project dir; /tmp is writable
+export const UPLOAD_DIR = path.join(process.env.VERCEL ? os.tmpdir() : process.cwd(), "uploads");
