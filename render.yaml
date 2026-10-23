@@ -1,0 +1,22 @@
+# Render Blueprint for BrandGuard AI
+# Import in Render: New + Blueprints -> pick repo -> pastes this automatically.
+services:
+  - type: web
+    name: brandguard-ai
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npx prisma db push && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22.11.0"
+      # Committed seeded SQLite DB -> demo accounts exist on every deploy
+      - key: DATABASE_URL
+        value: file:/opt/render/project/src/prisma/dev.db
+      # Paste your Groq key here when Render asks (never committed to git)
+      - key: GROQ_API_KEY
+        sync: false
+      # Render auto-generates a strong random secret
+      - key: AUTH_SECRET
+        generateValue: true
