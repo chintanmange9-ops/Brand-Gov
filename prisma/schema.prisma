@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("creator") // creator | reviewer | manager | steward | admin
+  orgId     String   @default("default")
+  createdAt DateTime @default(now())
+  contents  ContentItem[] @relation("Creator")
+  reviews   Review[]
+  comments  Comment[]
+}
+
+model BrandGuideline {
+  id        String   @id @default(cuid())
+  orgId     String   @default("default")
+  title     String
+  category  String   // tone | terminology | messaging | visual | accessibility | claims
+  content   String
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ApprovedFact {
+  id        String   @id @default(cuid())
+  orgId     String   @default("default")
+  statement String
+  source    String
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Terminology {
+  id        String   @id @default(cuid())
+  orgId     String   @default("default")
+  term      String
+  preferred String
+  avoid     String?
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model Asset {
+  id        String   @id @default(cuid())
+  orgId     String   @default("default")
+  name      String
+  type      String
+  url       String
+  metadata  String?
+  createdAt DateTime @default(now())
+}
+
+model ContentItem {
+  id        String   @id @default(cuid())
+  orgId     String   @default("default")
+  creatorId String
+  creator   User     @relation("Creator", fields: [creatorId], references: [id])
+  title     String
+  type      String   // text | document | image
+  body      String?
+  filePath  String?
+  status    String   @default("draft") // draft | submitted | in_review | changes_requested | approved | rejected | published
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  issues    Issue[]
+  reviews   Review[]
+  comments  Comment[]
+  revisions Revision[]
+}
+
+model Issue {
+  id           String   @id @default(cuid())
+  contentId    String
+  content      ContentItem @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  category     String
+  severity     String   // critical | major | minor | suggestion
+  location     String?
+  flaggedText  String?
+  explanation  String
+  sourceRef    String?
+  suggestedFix String?
+  confidence   Float?
+  status       String   @default("open") // open | resolved | dismissed
+  dismissReason String?
+  createdAt    DateTime @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  contentId String
+  content   ContentItem @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  reviewerId String
+  reviewer  User     @relation(fields: [reviewerId], references: [id])
+  decision  String   // approve | request_changes | reject
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  contentId String
+  content   ContentItem @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model Revision {
+  id        String   @id @default(cuid())
+  contentId String
+  content   ContentItem @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  version   Int
+  body      String
+  authorId  String
+  createdAt DateTime @default(now())
+}

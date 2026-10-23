@@ -39,3 +39,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# app-local clutter that should never ship
+/uploads
+/raw.txt
+/*.pdf
+/arch_*.png
+/architecture.png
+/home.png
+/ui_home.png
+/diagram.html
+/diagram.mmd
+/make_diagram.py
+/generate_plan.py
+/generate_round2.py
+/.playwright-mcp

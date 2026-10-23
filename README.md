@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BrandGuard AI
 
-## Getting Started
+Intelligent brand-governance platform: reviews marketing content against the
+organisation's approved brand kit **before publication** — and a human decides.
 
-First, run the development server:
+**Team ICYBITS · Team leader: Chintan Mange** · built for Codex 48.
+
+## What it does
+
+The core workflow:
+
+1. **Brand Stewards** maintain the single source of truth — brand guidelines
+   (tone, terminology, messaging, visual, accessibility, claims), approved
+   facts, terminology table, and asset metadata.
+2. **Creators** draft content (text paste, or upload PDF/DOCX/image) and submit
+   it for review.
+3. An **LLM review engine** checks the draft against the brand kit and returns
+   structured findings — category, severity, flagged text, explanation, source
+   reference, suggested fix, confidence.
+4. Creators **accept or dismiss** each finding (dismissals require a reason).
+   Re-reviews keep prior decisions.
+5. **Reviewers/Managers** make the human decision — approve, request changes,
+   or reject — with comments.
+6. **Managers+** publish — only content that was approved can be published.
+7. **Insights** aggregate issues by category/severity over time so recurring
+   problems surface.
+
+Every AI finding is advisory; nothing publishes without a human approval chain.
+
+## Tech stack
+
+- **Next.js 16** (App Router, TypeScript, Turbopack) + Tailwind CSS
+- **Prisma 5** + SQLite
+- **Groq** (`openai/gpt-oss-20b`) for the review engine
+- Auth: JWT session (`jose`) with bcrypt-hashed passwords, role-based access
+  (creator / reviewer / manager / steward / admin)
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env        # set GROQ_API_KEY (free at console.groq.com)
+npx prisma db push
+node prisma/seed.js
+npm run dev                 # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Demo accounts (password `demo123`): `creator@demo.com`, `reviewer@demo.com`,
+`manager@demo.com`, `steward@demo.com`, `admin@demo.com`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`render.yaml` is included — see [DEPLOY.md](DEPLOY.md). After import the app is
+live at `https://brandguard-ai.onrender.com` (or your assigned URL).
 
-## Learn More
+## Governance model
 
-To learn more about Next.js, take a look at the following resources:
+| Action | Who | Server-enforced |
+|---|---|---|
+| Edit brand kit | steward, admin | ✔ |
+| Submit for AI review | creator | ✔ |
+| Accept / dismiss findings | any member (dismissing requires reason) | ✔ |
+| Approve / request changes / reject | reviewer and up | ✔ |
+| Publish | manager and up, approved content only | ✔ |
+| Edit draft body | the draft's creator, only pre-review | ✔ |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+AI assistant tools were used during development (Next.js/TypeScript code
+authoring and a Playwright-driven verification pass); all product decisions,
+design and code review belong to the team.
